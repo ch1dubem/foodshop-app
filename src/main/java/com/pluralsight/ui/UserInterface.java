@@ -88,7 +88,27 @@ public class UserInterface {
 
 
     public boolean checkoutScreen() {
-        return false;
+        try {
+            System.out.println("\n" + currentOrder);
+            System.out.println("  1) Confirm Order");
+            System.out.println("  0) Cancel Order");
+            System.out.print("Your choice: ");
+            String choice = scanner.nextLine().trim();
+
+            if (choice.equals("1")) {
+                receiptManager.saveReceipt(currentOrder);
+                System.out.println("Order confirmed! Thank you for eating at Dubem's Naija Kitchen!");
+                currentOrder = null;
+                return true;
+            } else {
+                currentOrder = null;
+                System.out.println("Order cancelled.");
+                return true;
+            }
+        } catch (Exception e) {
+            System.out.println("Error at checkout: " + e.getMessage());
+            return false;
+        }
     }
 
 
