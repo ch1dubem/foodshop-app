@@ -177,6 +177,180 @@ public class UserInterface {
     }
 
     public void addItemScreen() {
+        try {
+            System.out.println("\n--- Build Your Rice Bowl ---");
+
+            System.out.println("Select rice type:");
+            System.out.println("  1) Jollof");
+            System.out.println("  2) Fried");
+            System.out.println("  3) Coconut");
+            System.out.println("  4) White");
+            System.out.print("Choice: ");
+            String typeChoice = scanner.nextLine().trim();
+
+            String riceType = switch (typeChoice) {
+                case "2" -> "Fried";
+                case "3" -> "Coconut";
+                case "4" -> "White";
+                default -> "Jollof";
+            };
+
+            System.out.println("\nSelect size:");
+            System.out.println("  1) Small  - $7.99");
+            System.out.println("  2) Medium - $10.99");
+            System.out.println("  3) Large  - $13.99");
+            System.out.print("Choice: ");
+            String sizeChoice = scanner.nextLine().trim();
+
+            String size = switch (sizeChoice) {
+                case "2" -> "Medium";
+                case "3" -> "Large";
+                default -> "Small";
+            };
+
+            Rice rice = new Rice(size, riceType);
+
+            addMeatToppings(rice);
+            addFishToppings(rice);
+            addRegularToppings(rice);
+            addSauceToppings(rice);
+
+            System.out.print("\nMake it spicy? (yes/no): ");
+            String spicy = scanner.nextLine().trim();
+            rice.setIsSpicy(spicy.equalsIgnoreCase("yes"));
+
+            currentOrder.addItem(rice);
+            System.out.println("\nRice bowl added to order!");
+            System.out.println(rice);
+            System.out.printf("Bowl Total: $%.2f%n", rice.getPrice());
+
+        } catch (Exception e) {
+            System.out.println("Error building rice bowl: ");
+        }
+    }
+
+    public void addMeatToppings(Rice rice) {
+        String[] meats = {"Chicken", "Turkey", "Goat Meat", "Beef", "Lamb"};
+        System.out.println("\n--- Meat Toppings ---");
+        System.out.println("Prices: Small $2.00 | Medium $3.00 | Large $4.00");
+        System.out.println("Extra:  Small +$1.00 | Medium +$1.50 | Large +$2.00");
+        for (int i = 0; i < meats.length; i++) {
+            System.out.printf("  %d) %s%n", i + 1, meats[i]);
+        }
+        System.out.println("  0) Done");
+
+        while (true) {
+            try {
+                System.out.print("Add meat (0 to finish): ");
+                int pick = Integer.parseInt(scanner.nextLine().trim());
+
+                if (pick == 0) break;
+                if (pick < 1 || pick > meats.length) {
+                    System.out.println("Invalid selection.");
+                    continue;
+                }
+
+                MeatTopping meat = new MeatTopping(meats[pick - 1]);
+                System.out.print("Extra " + meats[pick - 1] + "? (yes/no): ");
+                meat.setExtra(scanner.nextLine().trim().equalsIgnoreCase("yes"));
+
+                rice.addTopping(meat);
+                System.out.println("Added: " + meat);
+
+            } catch (NumberFormatException e) {
+                System.out.println("Please enter a valid number.");
+            }
+        }
+    }
+
+    public void addFishToppings(Rice rice) {
+        String[] fish = {"Tilapia", "Catfish", "Croaker", "Red Snapper"};
+        System.out.println("\n--- Premium Fish Toppings ---");
+        System.out.println("Prices: Small $2.50 | Medium $3.50 | Large $4.50");
+        System.out.println("Extra:  Small +$1.25 | Medium +$1.75 | Large +$2.25");
+        for (int i = 0; i < fish.length; i++) {
+            System.out.printf("  %d) %s%n", i + 1, fish[i]);
+        }
+        System.out.println("  0) Done");
+
+        while (true) {
+            try {
+                System.out.print("Add fish (0 to finish): ");
+                int pick = Integer.parseInt(scanner.nextLine().trim());
+
+                if (pick == 0) break;
+                if (pick < 1 || pick > fish.length) {
+                    System.out.println("Invalid selection.");
+                    continue;
+                }
+
+                FishTopping fishTopping = new FishTopping(fish[pick - 1]);
+                System.out.print("Extra " + fish[pick - 1] + "? (yes/no): ");
+                fishTopping.setExtra(scanner.nextLine().trim().equalsIgnoreCase("yes"));
+
+                rice.addTopping(fishTopping);
+                System.out.println("Added: " + fishTopping);
+
+            } catch (NumberFormatException e) {
+                System.out.println("Please enter a valid number.");
+            }
+        }
+    }
+
+    public void addRegularToppings(Rice rice) {
+        String[] regulars = {"Plantain", "Beans", "Eggs", "Coleslaw", "Seaweed"};
+        System.out.println("\n--- Regular Toppings (Free) ---");
+        for (int i = 0; i < regulars.length; i++) {
+            System.out.printf("  %d) %s%n", i + 1, regulars[i]);
+        }
+        System.out.println("  0) Done");
+
+        while (true) {
+            try {
+                System.out.print("Add topping (0 to finish): ");
+                int pick = Integer.parseInt(scanner.nextLine().trim());
+
+                if (pick == 0) break;
+                if (pick < 1 || pick > regulars.length) {
+                    System.out.println("Invalid selection.");
+                    continue;
+                }
+
+                rice.addTopping(new RegularTopping(regulars[pick - 1]));
+                System.out.println("Added: " + regulars[pick - 1]);
+
+            } catch (NumberFormatException e) {
+                System.out.println("Please enter a valid number.");
+            }
+        }
+    }
+
+    public void addSauceToppings(Rice rice) {
+        String[] sauces = {"Ofada Stew", "Peppered Stew", "Ofe Akwu", "Efe Riro"};
+        System.out.println("\n--- Stew/Condiments (Free) ---");
+        for (int i = 0; i < sauces.length; i++) {
+            System.out.printf("  %d) %s%n", i + 1, sauces[i]);
+        }
+        System.out.println("  0) Done");
+
+        while (true) {
+            try {
+                System.out.print("Add stew (0 to finish): ");
+                int pick = Integer.parseInt(scanner.nextLine().trim());
+
+                if (pick == 0) break;
+                if (pick < 1 || pick > sauces.length) {
+                    System.out.println("Invalid selection.");
+                    continue;
+                }
+
+                rice.addTopping(new SauceTopping(sauces[pick - 1]));
+                System.out.println("Added: " + sauces[pick - 1]);
+
+            } catch (NumberFormatException e) {
+                System.out.println("Please enter a valid number.");
+            }
+        }
     }
 
 

@@ -1,10 +1,6 @@
 package com.pluralsight.managers;
 
-
-
 import com.pluralsight.models.Order;
-import com.pluralsight.models.interfaces.Priceable;
-
 import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -18,7 +14,7 @@ public class ReceiptManager {
                 folder.mkdir();
             }
 
-            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss"));
+            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_hh-mm-ss-a"));
             String fileName = "receipts/" + timestamp + ".txt";
 
             BufferedWriter bw = new BufferedWriter(new FileWriter(fileName));
@@ -33,7 +29,7 @@ public class ReceiptManager {
             bw.newLine();
 
             int count = 1;
-            for (Priceable item : order.getItems()) {
+            for (var item : order.getItems()) {
                 bw.write(count + ") " + item);
                 bw.newLine();
                 bw.write(String.format("   Subtotal: $%.2f", item.getPrice()));
@@ -48,7 +44,11 @@ public class ReceiptManager {
             bw.newLine();
             bw.write("==========================================");
             bw.newLine();
-            bw.write("Receipt: " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss a")));
+            bw.write("Date: " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("MMMM dd, yyyy")));
+            bw.newLine();
+            bw.write("Time: " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("hh:mm:ss a")));
+            bw.newLine();
+            bw.write("==========================================");
             bw.newLine();
             bw.write("Thank you for eating at Dubem's Naija Kitchen!");
             bw.newLine();
