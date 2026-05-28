@@ -44,8 +44,65 @@ public class UserInterface {
         }
     }
 
-    public void orderScreen() {}
+    public void orderScreen() {
+        boolean ordering = true;
+        while (ordering) {
+            try {
+                System.out.println("\n  ORDER SCREEN");
+                System.out.println("  1) Add Rice Bowl");
+                System.out.println("  2) Add Drink");
+                System.out.println("  3) Add Pastry Side");
+                System.out.println("  4) Signature Bowls");
+                System.out.println("  5) Checkout");
+                System.out.println("  0) Cancel Order");
+                System.out.println("------------------------------------------");
+                System.out.print("Enter your choice: ");
 
+                String choice = scanner.nextLine().trim();
+
+                switch (choice) {
+                    case "1" -> addItemScreen();
+                    case "2" -> addDrinkScreen();
+                    case "3" -> addSideScreen();
+                    case "4" -> signatureBowlScreen();
+                    case "5" -> {
+                        if (currentOrder.isEmpty()) {
+                            System.out.println("Your order is empty! Add at least a drink or pastry side.");
+                        } else {
+                            ordering = !checkoutScreen();
+                        }
+                    }
+                    case "0" -> {
+                        currentOrder = null;
+                        System.out.println("Order cancelled.");
+                        ordering = false;
+                    }
+                    default -> System.out.println("Invalid option.");
+                }
+            } catch (Exception e) {
+                System.out.println("Something went wrong: ");
+            }
+
+        }
+    }
+
+
+    public boolean checkoutScreen() {
+        return false;
+    }
+
+
+    public void signatureBowlScreen() {
+    }
+
+    public void addSideScreen() {
+    }
+
+    public void addDrinkScreen() {
+    }
+
+    public void addItemScreen() {
+    }
 
 
 }
