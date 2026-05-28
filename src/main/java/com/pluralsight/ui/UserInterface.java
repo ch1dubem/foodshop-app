@@ -106,7 +106,7 @@ public class UserInterface {
                 return true;
             }
         } catch (Exception e) {
-            System.out.println("Error at checkout: " + e.getMessage());
+            System.out.println("Error at checkout: ");
             return false;
         }
     }
@@ -115,10 +115,65 @@ public class UserInterface {
     public void signatureBowlScreen() {
     }
 
-    public void addSideScreen() {
+    public void addSideScreen() {try {
+        System.out.println("\n--- Add a Pastry Side ($4.99) ---");
+        System.out.println("  1) Puff Puff");
+        System.out.println("  2) Meat Pie");
+        System.out.println("  3) Egg Roll");
+        System.out.print("Choice: ");
+        String choice = scanner.nextLine().trim();
+
+        String type = switch (choice) {
+            case "2" -> "Meat Pie";
+            case "3" -> "Egg Roll";
+            default -> "Puff Puff";
+        };
+
+        Pastries pastry = new Pastries(type);
+        currentOrder.addItem(pastry);
+        System.out.printf("Added: %s - $%.2f%n", pastry, pastry.getPrice());
+
+    } catch (Exception e) {
+        System.out.println("Error adding pastry: " );
+    }
     }
 
     public void addDrinkScreen() {
+        try {
+            System.out.println("\n--- Add a Drink ---");
+            System.out.println("Select flavor:");
+            System.out.println("  1) Zobo");
+            System.out.println("  2) Chapman");
+            System.out.print("Choice: ");
+            String flavorChoice = scanner.nextLine().trim();
+
+            String flavor = switch (flavorChoice) {
+                case "1" -> "Zobo";
+                case "2" -> "Chapman";
+                default -> "Zobo";
+            };
+
+            System.out.println("\nSelect size:");
+            System.out.println("  1) Small  - $3.00");
+            System.out.println("  2) Medium - $4.00");
+            System.out.println("  3) Large  - $5.00");
+            System.out.print("Choice: ");
+            String sizeChoice = scanner.nextLine().trim();
+
+            String size = switch (sizeChoice) {
+                case "2" -> "Medium";
+                case "3" -> "Large";
+                default -> "Small";
+            };
+
+            Drink drink = new Drink(size, flavor);
+            currentOrder.addItem(drink);
+            System.out.printf("Added: %s - $%.2f%n", drink, drink.getPrice());
+
+        } catch (Exception e) {
+            System.out.println("Error adding drink: ");
+        }
+
     }
 
     public void addItemScreen() {
