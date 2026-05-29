@@ -14,7 +14,7 @@ public class ReceiptManager {
                 folder.mkdir();
             }
 
-            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_hh-mm-ss-a"));
+            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss"));
             String fileName = "receipts/" + timestamp + ".txt";
 
             BufferedWriter bw = new BufferedWriter(new FileWriter(fileName));
@@ -28,16 +28,31 @@ public class ReceiptManager {
             bw.newLine();
             bw.newLine();
 
-            int count = 1;
-            for (var item : order.getItems()) {
-                bw.write(count + ") " + item);
-                bw.newLine();
-                bw.write(String.format("   Subtotal: $%.2f", item.getPrice()));
-                bw.newLine();
-                bw.write("------------------------------------------");
-                bw.newLine();
-                count++;
-            }
+            // Original loop:
+            // int count = 1;
+            // for (var item : order.getItems()) {
+            //     bw.write(count + ") " + item);
+            //     bw.newLine();
+            //     bw.write(String.format("   Subtotal: $%.2f", item.getPrice()));
+            //     bw.newLine();
+            //     bw.write("------------------------------------------");
+            //     bw.newLine();
+            //     count++;
+            // }
+            final int[] count = {1};
+            order.getItems().forEach(item -> {
+                try {
+                    bw.write(count[0] + ") " + item);
+                    bw.newLine();
+                    bw.write(String.format("   Subtotal: $%.2f", item.getPrice()));
+                    bw.newLine();
+                    bw.write("------------------------------------------");
+                    bw.newLine();
+                    count[0]++;
+                } catch (IOException e) {
+                    System.out.println("Error writing item: " + e.getMessage());
+                }
+            });
 
             bw.newLine();
             bw.write(String.format("ORDER TOTAL: $%.2f", order.getTotal()));
@@ -54,10 +69,10 @@ public class ReceiptManager {
             bw.newLine();
             bw.close();
 
-            System.out.println("Receipt saved to: " + fileName);
+            System.out.println("\033[2m  Receipt saved to: " + fileName + "\033[0m");
 
         } catch (IOException e) {
-            System.out.println("Error saving receipt: " + e.getMessage());
+            System.out.println("Error saving receipt: ");
         }
     }
 }
