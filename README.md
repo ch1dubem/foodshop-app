@@ -68,7 +68,7 @@ Follow these steps to get your application running within IntelliJ IDEA:
 
 ## UML Class Diagram
 
-![UML Diagram]![UML diagram (Copy).png](../../../../Downloads/UML%20diagram%20%28Copy%29.png)(diagrams/uml-class-diagram.png)
+![UML Class Diagram](assets/uml-class-diagram.png)
 
 
 ## Future Work
