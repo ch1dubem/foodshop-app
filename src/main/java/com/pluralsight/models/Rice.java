@@ -59,11 +59,15 @@ public class Rice implements Priceable {
             default -> base = 7.99;
         }
 
+        // Original loop:
+        // double toppingTotal = 0;
+        // for (Topping t : toppings) {
+        //     toppingTotal += t.getPrice(size);
+        // }
+        double toppingTotal = toppings.stream()
+                .mapToDouble(t -> t.getPrice(size))
+                .sum();
 
-         double toppingTotal = 0;
-         for (Topping t : toppings) {
-            toppingTotal += t.getPrice(size);
-         }
         return base + toppingTotal;
     }
 
@@ -72,15 +76,24 @@ public class Rice implements Priceable {
         StringBuilder sb = new StringBuilder();
         sb.append(String.format("%s %s Rice%s", size, riceType, isSpicy ? " (Spicy)" : ""));
 
-
-        for (Topping t : toppings) {
+        // Original loop:
+        // for (Topping t : toppings) {
+        //     double price = t.getPrice(size);
+        //     if (price > 0) {
+        //         sb.append(String.format("\n   + %-25s $%.2f", t, price));
+        //     } else {
+        //         sb.append(String.format("\n   + %-25s included", t));
+        //     }
+        // }
+        toppings.forEach(t -> {
             double price = t.getPrice(size);
             if (price > 0) {
                 sb.append(String.format("\n   + %-25s $%.2f", t, price));
             } else {
                 sb.append(String.format("\n   + %-25s included", t));
             }
-        }
+        });
+
         return sb.toString();
     }
 }
