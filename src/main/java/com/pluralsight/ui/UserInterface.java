@@ -1,4 +1,6 @@
 package com.pluralsight.ui;
+import com.pluralsight.signatures.SignatureRiceBowl;
+import java.util.ArrayList;
 
 import com.pluralsight.models.*;
 import com.pluralsight.toppings.*;
@@ -113,6 +115,70 @@ public class UserInterface {
 
 
     public void signatureBowlScreen() {
+        try {
+            ArrayList<Rice> bowls = SignatureRiceBowl.getSignatureBowls();
+            String[] names = SignatureRiceBowl.getSignatureNames();
+
+            System.out.println("\n--- Signature Rice Bowls ---");
+            for (int i = 0; i < names.length; i++) {
+                System.out.printf("\n  %d) %s - $%.2f%n", i + 1, names[i], bowls.get(i).getPrice());
+                System.out.printf("     %s %s Rice%n", bowls.get(i).getSize(), bowls.get(i).getRiceType());
+                for (Topping t : bowls.get(i).getToppings()) {
+                    System.out.println("       + " + t.getName());
+                }
+            }
+            System.out.println("\n  0) Back");
+            System.out.print("Choice: ");
+            String choice = scanner.nextLine().trim();
+
+            int pick = Integer.parseInt(choice);
+
+            if (pick == 0) return;
+            if (pick < 1 || pick > bowls.size()) {
+                System.out.println("Invalid selection.");
+                return;
+            }
+
+            Rice selected = bowls.get(pick - 1);
+            System.out.printf("\nSelected: %s%n", names[pick - 1]);
+
+            System.out.print("Customize it? (yes/no): ");
+            String customize = scanner.nextLine().trim();
+
+            if (customize.equalsIgnoreCase("yes")) {
+                System.out.println("\nCurrent toppings:");
+                for (int i = 0; i < selected.getToppings().size(); i++) {
+                    System.out.printf("  %d) %s%n", i + 1, selected.getToppings().get(i).getName());
+                }
+
+                System.out.print("Remove a topping? Enter name (or 'done'): ");
+                while (true) {
+                    String input = scanner.nextLine().trim();
+                    if (input.equalsIgnoreCase("done")) break;
+                    selected.removeTopping(input);
+                    System.out.println("Removed: " + input);
+                    System.out.print("Remove another? (name or 'done'): ");
+                }
+
+                System.out.print("Add more toppings? (yes/no): ");
+                if (scanner.nextLine().trim().equalsIgnoreCase("yes")) {
+                    addMeatToppings(selected);
+                    addFishToppings(selected);
+                    addRegularToppings(selected);
+                    addSauceToppings(selected);
+                }
+            }
+
+            currentOrder.addItem(selected);
+            System.out.println("\nSignature bowl added!");
+            System.out.println(selected);
+            System.out.printf("Bowl Total: $%.2f%n", selected.getPrice());
+
+        } catch (NumberFormatException e) {
+            System.out.println("Please enter a valid number.");
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
     }
 
     public void addSideScreen() {try {
