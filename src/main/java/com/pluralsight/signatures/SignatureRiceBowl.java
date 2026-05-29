@@ -1,20 +1,18 @@
 package com.pluralsight.signatures;
 
-
-
 import com.pluralsight.models.Rice;
-import com.pluralsight.toppings.FishTopping;
-import com.pluralsight.toppings.MeatTopping;
-import com.pluralsight.toppings.RegularTopping;
-import com.pluralsight.toppings.SauceTopping;
-
+import com.pluralsight.toppings.*;
 import java.util.ArrayList;
 
+// Factory class that creates pre-built signature rice bowls
+// Customers can select a signature bowl and optionally customize it
 public class SignatureRiceBowl {
 
+    // Creates and returns 3 pre-built Rice bowls with toppings already added
     public static ArrayList<Rice> getSignatureBowls() {
         ArrayList<Rice> bowls = new ArrayList<>();
 
+        // The Jollof Special — Large Jollof with Chicken, Plantain, Coleslaw, Peppered Stew
         Rice jollofSpecial = new Rice("Large", "Jollof");
         jollofSpecial.addTopping(new MeatTopping("Chicken"));
         jollofSpecial.addTopping(new RegularTopping("Plantain"));
@@ -23,6 +21,7 @@ public class SignatureRiceBowl {
         jollofSpecial.setIsSpicy(true);
         bowls.add(jollofSpecial);
 
+        // Fish Lover's Bowl — Medium Fried with Tilapia, Catfish, Eggs, Ofada Stew
         Rice fishLover = new Rice("Medium", "Fried");
         fishLover.addTopping(new FishTopping("Tilapia"));
         fishLover.addTopping(new FishTopping("Catfish"));
@@ -31,6 +30,7 @@ public class SignatureRiceBowl {
         fishLover.setIsSpicy(false);
         bowls.add(fishLover);
 
+        // The Lagos Classic — Large Coconut with Beef, Goat Meat, Beans, Plantain, Efe Riro
         Rice lagosClassic = new Rice("Large", "Coconut");
         lagosClassic.addTopping(new MeatTopping("Beef"));
         lagosClassic.addTopping(new MeatTopping("Goat Meat"));
@@ -42,6 +42,8 @@ public class SignatureRiceBowl {
 
         return bowls;
     }
+
+    // Returns display names for the signature bowls
 
     public static String[] getSignatureNames() {
         return new String[] {

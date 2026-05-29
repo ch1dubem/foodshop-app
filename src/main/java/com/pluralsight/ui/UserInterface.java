@@ -8,8 +8,12 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.stream.IntStream;
 
+// Main UI class — handles all screens and user interaction
+// Every input is validated with try-catch and loops until valid
+// ANSI color codes provide Nigerian flag themed terminal output
 public class UserInterface {
 
+    // ANSI escape codes for terminal coloring
     private static final String RESET = "\033[0m";
     private static final String BOLD = "\033[1m";
     private static final String GREEN = "\033[32m";
@@ -23,12 +27,16 @@ public class UserInterface {
     private static final String DIM = "\033[2m";
 
     Scanner scanner = new Scanner(System.in);
-    Order currentOrder;
-    ReceiptManager receiptManager = new ReceiptManager();
+    Order currentOrder;                          // The active order being built
+    ReceiptManager receiptManager = new ReceiptManager();  // Handles saving receipts
 
+    // Entry point — starts the app
     public void display() {
         homeScreen();
     }
+
+    // Prints the ASCII art banner with Nigerian flag colors
+
 
     public void printBanner() {
         System.out.println(GREEN + "  ═══════════════════════════════════════════════════════════════" + RESET);
@@ -57,6 +65,8 @@ public class UserInterface {
         System.out.println(GREEN + "  ═══════════════════════════════════════════════════════════════" + RESET);
     }
 
+    // Home screen — main menu loop
+    // Option 1 creates a new order, option 0 exits
     public void homeScreen() {
         printBanner();
         boolean running = true;
@@ -91,6 +101,8 @@ public class UserInterface {
         }
     }
 
+    // Order screen — lets user add items, checkout, or cancel
+    // Loops until checkout completes or order is cancelled
     public void orderScreen() {
         boolean ordering = true;
         while (ordering) {
@@ -117,6 +129,7 @@ public class UserInterface {
                     case "3" -> addSideScreen();
                     case "4" -> signatureBowlScreen();
                     case "5" -> {
+                        // Block checkout if order is empty
                         if (currentOrder.isEmpty()) {
                             System.out.println(RED + "  ✘ Your order is empty! Add at least a drink or pastry side." + RESET);
                         } else {
@@ -136,10 +149,14 @@ public class UserInterface {
         }
     }
 
+    // Checkout screen — displays order and asks for confirmation
+    // Returns true to exit the order loop, false to stay
     public boolean checkoutScreen() {
         try {
+            // Display the full order receipt
             System.out.println(currentOrder);
 
+            // Validate: only accept 1 or 0
             while (true) {
                 try {
                     System.out.println(GREEN + "  1) " + WHITE + "✔ Confirm Order" + RESET);
@@ -148,6 +165,7 @@ public class UserInterface {
                     String choice = scanner.nextLine().trim();
 
                     if (choice.equals("1")) {
+                        // Save receipt and clear order
                         receiptManager.saveReceipt(currentOrder);
                         System.out.println(GREEN + BOLD + "\n  ✔ Order confirmed!" + RESET);
                         System.out.println(GREEN + "  🙏 Thank you for eating at Dubem's Naija Kitchen!" + RESET);
@@ -170,9 +188,12 @@ public class UserInterface {
         }
     }
 
+    // Rice bowl builder — walks through type, size, toppings, spicy
+    // Creates a Rice object and adds it to the current order
     public void addItemScreen() {
         try {
             System.out.println(GREEN + BOLD + "\n  ─── 🍚 Build Your Rice Bowl ───" + RESET);
+
 
             String riceType;
             while (true) {
@@ -200,6 +221,7 @@ public class UserInterface {
                 }
             }
 
+
             String size;
             while (true) {
                 try {
@@ -224,13 +246,16 @@ public class UserInterface {
                 }
             }
 
+            // Create the rice bowl with chosen type and size
             Rice rice = new Rice(size, riceType);
 
+            // Add toppings — each method handles its own category
             addMeatToppings(rice);
             addFishToppings(rice);
             addRegularToppings(rice);
             addSauceToppings(rice);
 
+            // Spicy option — validates yes/no only
             while (true) {
                 try {
                     System.out.print(YELLOW + "\n  Make it spicy? 🌶️  (yes/no): " + RESET);
@@ -249,6 +274,7 @@ public class UserInterface {
                 }
             }
 
+            // Add completed bowl to order and show summary
             currentOrder.addItem(rice);
             System.out.println(GREEN + BOLD + "\n  ✔ Rice bowl added to order!" + RESET);
             System.out.println(DIM + "  " + rice + RESET);
@@ -259,11 +285,16 @@ public class UserInterface {
         }
     }
 
+    // Meat topping selection — Chicken, Turkey, Goat Meat, Beef, Lamb
+    // Loops until user enters 0 to finish
+    // Asks for extra on each meat with yes/no validation
     public void addMeatToppings(Rice rice) {
         String[] meats = {"Chicken", "Turkey", "Goat Meat", "Beef", "Lamb"};
         System.out.println(YELLOW + BOLD + "\n  ─── 🥩 Meat Toppings ───" + RESET);
         System.out.printf(DIM + "  Prices: Small $2.00 │ Medium $3.00 │ Large $4.00%n" + RESET);
         System.out.printf(DIM + "  Extra:  Small +$1.00 │ Medium +$1.50 │ Large +$2.00%n" + RESET);
+
+        // Display options using IntStream instead of for loop
 
         // Original loop:
         // for (int i = 0; i < meats.length; i++) {
@@ -273,6 +304,7 @@ public class UserInterface {
                 .forEach(i -> System.out.printf(WHITE + "    %d) %s%n" + RESET, i + 1, meats[i]));
 
         System.out.println(DIM + "    0) Done" + RESET);
+
 
         while (true) {
             try {
@@ -286,6 +318,8 @@ public class UserInterface {
                 }
 
                 MeatTopping meat = new MeatTopping(meats[pick - 1]);
+
+                // Ask for extra with yes/no validation loop
                 while (true) {
                     try {
                         System.out.print(YELLOW + "  Extra " + meats[pick - 1] + "? (yes/no): " + RESET);
@@ -304,6 +338,7 @@ public class UserInterface {
                     }
                 }
 
+                // Add to rice and show price based on bowl size
                 rice.addTopping(meat);
                 System.out.println(GREEN + "  ✔ Added: " + meat + " - " + CYAN + String.format("$%.2f", meat.getPrice(rice.getSize())) + RESET);
 
@@ -313,6 +348,8 @@ public class UserInterface {
         }
     }
 
+    // Fish topping selection — Tilapia, Catfish, Croaker, Red Snapper
+    // Same pattern as addMeatToppings but with higher prices
     public void addFishToppings(Rice rice) {
         String[] fish = {"Tilapia", "Catfish", "Croaker", "Red Snapper"};
         System.out.println(YELLOW + BOLD + "\n  ─── 🐟 Premium Fish Toppings ───" + RESET);
@@ -340,6 +377,8 @@ public class UserInterface {
                 }
 
                 FishTopping fishTopping = new FishTopping(fish[pick - 1]);
+
+                // Ask for extra with yes/no validation loop
                 while (true) {
                     try {
                         System.out.print(YELLOW + "  Extra " + fish[pick - 1] + "? (yes/no): " + RESET);
@@ -367,6 +406,8 @@ public class UserInterface {
         }
     }
 
+    // Regular topping selection — Plantain, Beans, Eggs, Coleslaw, Seaweed
+    // All free — no extra option needed
     public void addRegularToppings(Rice rice) {
         String[] regulars = {"Plantain", "Beans", "Eggs", "Coleslaw", "Seaweed"};
         System.out.println(YELLOW + BOLD + "\n  ─── 🥗 Regular Toppings (Free) ───" + RESET);
@@ -400,6 +441,8 @@ public class UserInterface {
         }
     }
 
+    // Sauce/stew selection — Ofada Stew, Peppered Stew, Ofe Akwu, Efe Riro
+    // All free — no extra option needed
     public void addSauceToppings(Rice rice) {
         String[] sauces = {"Ofada Stew", "Peppered Stew", "Ofe Akwu", "Efe Riro"};
         System.out.println(YELLOW + BOLD + "\n  ─── 🍲 Stew/Condiments (Free) ───" + RESET);
@@ -433,10 +476,13 @@ public class UserInterface {
         }
     }
 
+    // Drink screen — pick flavor and size
+    // All inputs validated with loops
     public void addDrinkScreen() {
         try {
             System.out.println(GREEN + BOLD + "\n  ─── 🥤 Add a Drink ───" + RESET);
 
+            // Select flavor — validates 1 or 2
             String flavor;
             while (true) {
                 try {
@@ -459,6 +505,7 @@ public class UserInterface {
                 }
             }
 
+            // Select size — validates 1-3
             String size;
             while (true) {
                 try {
@@ -483,6 +530,7 @@ public class UserInterface {
                 }
             }
 
+            // Create drink and add to order
             Drink drink = new Drink(size, flavor);
             currentOrder.addItem(drink);
             System.out.printf(GREEN + "  ✔ Added: %s - " + CYAN + "$%.2f%n" + RESET, drink, drink.getPrice());
@@ -492,11 +540,14 @@ public class UserInterface {
         }
     }
 
+    // Pastry side screen — pick type
+    // All pastries are $4.99
     public void addSideScreen() {
         try {
             System.out.println(GREEN + BOLD + "\n  ─── 🥧 Add a Pastry Side ───" + RESET);
             System.out.println(DIM + "  All pastries: $4.99" + RESET);
 
+            // Validate 1-3
             String type;
             while (true) {
                 try {
@@ -520,6 +571,7 @@ public class UserInterface {
                 }
             }
 
+            // Create pastry and add to order
             Pastries pastry = new Pastries(type);
             currentOrder.addItem(pastry);
             System.out.printf(GREEN + "  ✔ Added: %s - " + CYAN + "$%.2f%n" + RESET, pastry, pastry.getPrice());
@@ -529,6 +581,9 @@ public class UserInterface {
         }
     }
 
+    // Signature bowl screen
+    // Shows 3 pre-built bowls, lets customer pick one and optionally customize
+    // Customization reuses the same topping methods
     public void signatureBowlScreen() {
         try {
             ArrayList<Rice> bowls = SignatureRiceBowl.getSignatureBowls();
@@ -536,14 +591,10 @@ public class UserInterface {
 
             System.out.println(MAGENTA + BOLD + "\n  ─── ⭐ Signature Rice Bowls ───" + RESET);
 
+            // Display all signature bowls with prices and toppings
+
             // Original loop:
-            // for (int i = 0; i < names.length; i++) {
-            //     System.out.printf(YELLOW + "\n  %d) %s" + CYAN + " - $%.2f%n" + RESET, i + 1, names[i], bowls.get(i).getPrice());
-            //     System.out.printf(DIM + "     %s %s Rice%n" + RESET, bowls.get(i).getSize(), bowls.get(i).getRiceType());
-            //     for (Topping t : bowls.get(i).getToppings()) {
-            //         System.out.println(DIM + "       + " + t.getName() + RESET);
-            //     }
-            // }
+            // for (int i = 0; i < names.length; i++) { ... }
             IntStream.range(0, names.length)
                     .forEach(i -> {
                         System.out.printf(YELLOW + "\n  %d) %s" + CYAN + " - $%.2f%n" + RESET, i + 1, names[i], bowls.get(i).getPrice());
@@ -554,6 +605,7 @@ public class UserInterface {
 
             System.out.println(DIM + "\n  0) Back" + RESET);
 
+            // Validate pick — must be 0 through bowls.size()
             int pick;
             while (true) {
                 try {
@@ -570,20 +622,21 @@ public class UserInterface {
             Rice selected = bowls.get(pick - 1);
             System.out.printf(GREEN + "\n  Selected: %s%n" + RESET, names[pick - 1]);
 
+            // Ask to customize — validates yes/no
             while (true) {
                 try {
                     System.out.print(YELLOW + "  Customize it? (yes/no): " + RESET);
                     String customize = scanner.nextLine().trim().toLowerCase();
                     if (customize.equals("yes")) {
+                        // Show current toppings
                         System.out.println(WHITE + "\n  Current toppings:" + RESET);
 
                         // Original loop:
-                        // for (int i = 0; i < selected.getToppings().size(); i++) {
-                        //     System.out.printf(DIM + "    %d) %s%n" + RESET, i + 1, selected.getToppings().get(i).getName());
-                        // }
+                        // for (int i = 0; i < selected.getToppings().size(); i++) { ... }
                         IntStream.range(0, selected.getToppings().size())
                                 .forEach(i -> System.out.printf(DIM + "    %d) %s%n" + RESET, i + 1, selected.getToppings().get(i).getName()));
 
+                        // Remove toppings by name
                         System.out.print(YELLOW + "  Remove a topping? Enter name (or 'done'): " + RESET);
                         while (true) {
                             String input = scanner.nextLine().trim();
@@ -593,6 +646,7 @@ public class UserInterface {
                             System.out.print(YELLOW + "  Remove another? (name or 'done'): " + RESET);
                         }
 
+                        // Ask to add more toppings — validates yes/no
                         while (true) {
                             try {
                                 System.out.print(YELLOW + "  Add more toppings? (yes/no): " + RESET);
@@ -623,6 +677,7 @@ public class UserInterface {
                 }
             }
 
+            // Ask about spicy — validates yes/no
             while (true) {
                 try {
                     System.out.print(YELLOW + "\n  Make it spicy? 🌶️  (yes/no): " + RESET);
@@ -641,6 +696,7 @@ public class UserInterface {
                 }
             }
 
+            // Add to order and show summary
             currentOrder.addItem(selected);
             System.out.println(GREEN + BOLD + "\n  ✔ Signature bowl added!" + RESET);
             System.out.println(DIM + "  " + selected + RESET);
