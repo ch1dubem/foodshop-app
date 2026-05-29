@@ -8,6 +8,19 @@ import com.pluralsight.managers.ReceiptManager;
 import java.util.Scanner;
 
 public class UserInterface {
+
+    private static final String RESET = "\033[0m";
+    private static final String BOLD = "\033[1m";
+    private static final String GREEN = "\033[32m";
+    private static final String YELLOW = "\033[33m";
+    private static final String CYAN = "\033[36m";
+    private static final String RED = "\033[31m";
+    private static final String WHITE = "\033[37m";
+    private static final String MAGENTA = "\033[35m";
+    private static final String BG_GREEN = "\033[42m";
+    private static final String BLACK = "\033[30m";
+    private static final String DIM = "\033[2m";
+
     Scanner scanner = new Scanner(System.in);
     Order currentOrder;
     ReceiptManager receiptManager = new ReceiptManager();
@@ -18,6 +31,7 @@ public class UserInterface {
 
 
     public void homeScreen() {
+        printBanner();
         boolean running = true;
         while (running) {
             System.out.println("\n==========================================");
@@ -418,6 +432,38 @@ public class UserInterface {
             }
         }
     }
+
+
+    private void printBanner() {
+        System.out.println(GREEN + "  ═══════════════════════════════════════════════════════════════" + RESET);
+        System.out.println(GREEN + BOLD +
+                "     ____        __                  __    \n" +
+                "    / __ \\__  __/ /_  ___  ____ ___ ( _)___ \n" +
+                "   / / / / / / / __ \\/ _ \\/ __ `__ \\/ / ___/ \n" +
+                "  / /_/ / /_/ / /_/ /  __/ / / / / / (__  )  \n" +
+                " /_____/\\__,_/_.___/\\___/_/ /_/ /_/_/____/   " + RESET);
+        System.out.println(WHITE + BOLD +
+                "     _   __      _  _          \n" +
+                "    / | / /___ _(_)(_)___ _    \n" +
+                "   /  |/ / __ `/ / / __ `/    \n" +
+                "  / /|  / /_/ / / / /_/ /     \n" +
+                " /_/ |_/\\__,_/_/ /\\__,_/      \n" +
+                "             /___/             " + RESET);
+        System.out.println(GREEN + BOLD +
+                "     __ __ _ __       __                 \n" +
+                "    / //_/(_) /______/ /_  ___  ____     \n" +
+                "   / ,<  / / __/ ___/ __ \\/ _ \\/ __ \\    \n" +
+                "  / /| |/ / /_/ /__/ / / /  __/ / / /    \n" +
+                " /_/ |_/_/\\__/\\___/_/ /_/\\___/_/ /_/     " + RESET);
+        System.out.println(GREEN + "  ═══════════════════════════════════════════════════════════════" + RESET);
+        System.out.println(YELLOW + "          Welcome to Dubem's Naija Kitchen!" + RESET);
+        System.out.println(DIM + "         \"Taste of Home, One Bowl at a Time\"" + RESET);
+        System.out.println(GREEN + "  ═══════════════════════════════════════════════════════════════" + RESET);
+    }
+
+
+
+
 
 
 }
