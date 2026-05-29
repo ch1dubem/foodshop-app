@@ -1,11 +1,12 @@
 package com.pluralsight.ui;
-import com.pluralsight.signatures.SignatureRiceBowl;
-import java.util.ArrayList;
 
+import com.pluralsight.signatures.SignatureRiceBowl;
 import com.pluralsight.models.*;
 import com.pluralsight.toppings.*;
 import com.pluralsight.managers.ReceiptManager;
+import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.stream.IntStream;
 
 public class UserInterface {
 
@@ -29,33 +30,36 @@ public class UserInterface {
         homeScreen();
     }
 
-
     public void homeScreen() {
         printBanner();
         boolean running = true;
         while (running) {
-            System.out.println("\n==========================================");
-            System.out.println("        DUBEM'S NAIJA KITCHEN");
-            System.out.println("   \"Taste of Home, One Bowl at a Time\"");
-            System.out.println("==========================================");
-            System.out.println("  HOME SCREEN");
-            System.out.println("  1) New Order");
-            System.out.println("  0) Exit");
-            System.out.println("------------------------------------------");
-            System.out.print("Enter your choice: ");
+            try {
+                System.out.println();
+                System.out.println(GREEN + "┌──────────────────────────────────────────┐" + RESET);
+                System.out.println(GREEN + "│" + RESET + WHITE + BOLD + "              HOME SCREEN                 " + RESET + GREEN + "│" + RESET);
+                System.out.println(GREEN + "├──────────────────────────────────────────┤" + RESET);
+                System.out.println(GREEN + "│" + RESET + YELLOW + "  1) " + WHITE + "New Order                          " + GREEN + "│" + RESET);
+                System.out.println(GREEN + "│" + RESET + RED + "  0) " + WHITE + "Exit                               " + GREEN + "│" + RESET);
+                System.out.println(GREEN + "└──────────────────────────────────────────┘" + RESET);
+                System.out.print(CYAN + "  ➤ Your choice: " + RESET);
 
-            String choice = scanner.nextLine().trim();
+                String choice = scanner.nextLine().trim();
 
-            switch (choice) {
-                case "1" -> {
-                    currentOrder = new Order();
-                    orderScreen();
+                switch (choice) {
+                    case "1" -> {
+                        currentOrder = new Order();
+                        orderScreen();
+                    }
+                    case "0" -> {
+                        System.out.println(GREEN + BOLD + "\n  🙏 Thank you for visiting Dubem's Naija Kitchen!" + RESET);
+                        System.out.println(DIM + "     We hope to see you again soon!\n" + RESET);
+                        running = false;
+                    }
+                    default -> System.out.println(RED + "  ✘ Invalid option." + RESET);
                 }
-                case "0" -> {
-                    System.out.println("Thank you for visiting Dubem's Naija Kitchen!");
-                    running = false;
-                }
-                default -> System.out.println("Invalid option.");
+            } catch (Exception e) {
+                System.out.println(RED + "  ✘ Something went wrong: " + RESET);
             }
         }
     }
@@ -64,15 +68,19 @@ public class UserInterface {
         boolean ordering = true;
         while (ordering) {
             try {
-                System.out.println("\n  ORDER SCREEN");
-                System.out.println("  1) Add Rice Bowl");
-                System.out.println("  2) Add Drink");
-                System.out.println("  3) Add Pastry Side");
-                System.out.println("  4) Signature Bowls");
-                System.out.println("  5) Checkout");
-                System.out.println("  0) Cancel Order");
-                System.out.println("------------------------------------------");
-                System.out.print("Enter your choice: ");
+                System.out.println();
+                System.out.println(GREEN + "┌──────────────────────────────────────────┐" + RESET);
+                System.out.println(GREEN + "│" + RESET + WHITE + BOLD + "              ORDER MENU                  " + RESET + GREEN + "│" + RESET);
+                System.out.println(GREEN + "├──────────────────────────────────────────┤" + RESET);
+                System.out.println(GREEN + "│" + RESET + YELLOW + "  1) " + WHITE + "🍚 Add Rice Bowl                    " + GREEN + "│" + RESET);
+                System.out.println(GREEN + "│" + RESET + YELLOW + "  2) " + WHITE + "🥤 Add Drink                        " + GREEN + "│" + RESET);
+                System.out.println(GREEN + "│" + RESET + YELLOW + "  3) " + WHITE + "🥧 Add Pastry Side                  " + GREEN + "│" + RESET);
+                System.out.println(GREEN + "│" + RESET + MAGENTA + "  4) " + WHITE + "⭐ Signature Bowls                  " + GREEN + "│" + RESET);
+                System.out.println(GREEN + "├──────────────────────────────────────────┤" + RESET);
+                System.out.println(GREEN + "│" + RESET + CYAN + "  5) " + WHITE + "💰 Checkout                         " + GREEN + "│" + RESET);
+                System.out.println(GREEN + "│" + RESET + RED + "  0) " + WHITE + "✘  Cancel Order                     " + GREEN + "│" + RESET);
+                System.out.println(GREEN + "└──────────────────────────────────────────┘" + RESET);
+                System.out.print(CYAN + "  ➤ Your choice: " + RESET);
 
                 String choice = scanner.nextLine().trim();
 
@@ -83,98 +91,111 @@ public class UserInterface {
                     case "4" -> signatureBowlScreen();
                     case "5" -> {
                         if (currentOrder.isEmpty()) {
-                            System.out.println("Your order is empty! Add at least a drink or pastry side.");
+                            System.out.println(RED + "  ✘ Your order is empty! Add at least a drink or pastry side." + RESET);
                         } else {
                             ordering = !checkoutScreen();
                         }
                     }
                     case "0" -> {
                         currentOrder = null;
-                        System.out.println("Order cancelled.");
+                        System.out.println(RED + "  ✘ Order cancelled." + RESET);
                         ordering = false;
                     }
-                    default -> System.out.println("Invalid option.");
+                    default -> System.out.println(RED + "  ✘ Invalid option." + RESET);
                 }
             } catch (Exception e) {
-                System.out.println("Something went wrong: ");
+                System.out.println(RED + "  ✘ Something went wrong: " + RESET);
             }
-
         }
     }
 
-
     public boolean checkoutScreen() {
         try {
-            System.out.println("\n" + currentOrder);
-            System.out.println("  1) Confirm Order");
-            System.out.println("  0) Cancel Order");
-            System.out.print("Your choice: ");
+            System.out.println(currentOrder);
+
+            System.out.println(GREEN + "  1) " + WHITE + "✔ Confirm Order" + RESET);
+            System.out.println(RED + "  0) " + WHITE + "✘ Cancel Order" + RESET);
+            System.out.print(CYAN + "  ➤ Choice: " + RESET);
             String choice = scanner.nextLine().trim();
 
             if (choice.equals("1")) {
                 receiptManager.saveReceipt(currentOrder);
-                System.out.println("Order confirmed! Thank you for eating at Dubem's Naija Kitchen!");
+                System.out.println(GREEN + BOLD + "\n  ✔ Order confirmed!" + RESET);
+                System.out.println(GREEN + "  🙏 Thank you for eating at Dubem's Naija Kitchen!" + RESET);
                 currentOrder = null;
                 return true;
             } else {
                 currentOrder = null;
-                System.out.println("Order cancelled.");
+                System.out.println(RED + "  ✘ Order cancelled." + RESET);
                 return true;
             }
         } catch (Exception e) {
-            System.out.println("Error at checkout: ");
+            System.out.println(RED + "  ✘ Error at checkout: " + RESET);
             return false;
         }
     }
-
 
     public void signatureBowlScreen() {
         try {
             ArrayList<Rice> bowls = SignatureRiceBowl.getSignatureBowls();
             String[] names = SignatureRiceBowl.getSignatureNames();
 
-            System.out.println("\n--- Signature Rice Bowls ---");
-            for (int i = 0; i < names.length; i++) {
-                System.out.printf("\n  %d) %s - $%.2f%n", i + 1, names[i], bowls.get(i).getPrice());
-                System.out.printf("     %s %s Rice%n", bowls.get(i).getSize(), bowls.get(i).getRiceType());
-                for (Topping t : bowls.get(i).getToppings()) {
-                    System.out.println("       + " + t.getName());
-                }
-            }
-            System.out.println("\n  0) Back");
-            System.out.print("Choice: ");
+            System.out.println(MAGENTA + BOLD + "\n  ─── ⭐ Signature Rice Bowls ───" + RESET);
+
+            // Original loop:
+            // for (int i = 0; i < names.length; i++) {
+            //     System.out.printf(YELLOW + "\n  %d) %s" + CYAN + " - $%.2f%n" + RESET, i + 1, names[i], bowls.get(i).getPrice());
+            //     System.out.printf(DIM + "     %s %s Rice%n" + RESET, bowls.get(i).getSize(), bowls.get(i).getRiceType());
+            //     for (Topping t : bowls.get(i).getToppings()) {
+            //         System.out.println(DIM + "       + " + t.getName() + RESET);
+            //     }
+            // }
+            IntStream.range(0, names.length)
+                    .forEach(i -> {
+                        System.out.printf(YELLOW + "\n  %d) %s" + CYAN + " - $%.2f%n" + RESET, i + 1, names[i], bowls.get(i).getPrice());
+                        System.out.printf(DIM + "     %s %s Rice%n" + RESET, bowls.get(i).getSize(), bowls.get(i).getRiceType());
+                        bowls.get(i).getToppings().forEach(t ->
+                                System.out.println(DIM + "       + " + t.getName() + RESET));
+                    });
+
+            System.out.println(DIM + "\n  0) Back" + RESET);
+            System.out.print(CYAN + "  ➤ Choice: " + RESET);
             String choice = scanner.nextLine().trim();
 
             int pick = Integer.parseInt(choice);
 
             if (pick == 0) return;
             if (pick < 1 || pick > bowls.size()) {
-                System.out.println("Invalid selection.");
+                System.out.println(RED + "  ✘ Invalid selection." + RESET);
                 return;
             }
 
             Rice selected = bowls.get(pick - 1);
-            System.out.printf("\nSelected: %s%n", names[pick - 1]);
+            System.out.printf(GREEN + "\n  Selected: %s%n" + RESET, names[pick - 1]);
 
-            System.out.print("Customize it? (yes/no): ");
+            System.out.print(YELLOW + "  Customize it? (yes/no): " + RESET);
             String customize = scanner.nextLine().trim();
 
             if (customize.equalsIgnoreCase("yes")) {
-                System.out.println("\nCurrent toppings:");
-                for (int i = 0; i < selected.getToppings().size(); i++) {
-                    System.out.printf("  %d) %s%n", i + 1, selected.getToppings().get(i).getName());
-                }
+                System.out.println(WHITE + "\n  Current toppings:" + RESET);
 
-                System.out.print("Remove a topping? Enter name (or 'done'): ");
+                // Original loop:
+                // for (int i = 0; i < selected.getToppings().size(); i++) {
+                //     System.out.printf(DIM + "    %d) %s%n" + RESET, i + 1, selected.getToppings().get(i).getName());
+                // }
+                IntStream.range(0, selected.getToppings().size())
+                        .forEach(i -> System.out.printf(DIM + "    %d) %s%n" + RESET, i + 1, selected.getToppings().get(i).getName()));
+
+                System.out.print(YELLOW + "  Remove a topping? Enter name (or 'done'): " + RESET);
                 while (true) {
                     String input = scanner.nextLine().trim();
                     if (input.equalsIgnoreCase("done")) break;
                     selected.removeTopping(input);
-                    System.out.println("Removed: " + input);
-                    System.out.print("Remove another? (name or 'done'): ");
+                    System.out.println(RED + "  ✘ Removed: " + input + RESET);
+                    System.out.print(YELLOW + "  Remove another? (name or 'done'): " + RESET);
                 }
 
-                System.out.print("Add more toppings? (yes/no): ");
+                System.out.print(YELLOW + "  Add more toppings? (yes/no): " + RESET);
                 if (scanner.nextLine().trim().equalsIgnoreCase("yes")) {
                     addMeatToppings(selected);
                     addFishToppings(selected);
@@ -183,48 +204,73 @@ public class UserInterface {
                 }
             }
 
+
+
+            while (true) {
+                try {
+                    System.out.print(YELLOW + "\n  Make it spicy? 🌶️  (yes/no): " + RESET);
+                    String spicy = scanner.nextLine().trim().toLowerCase();
+                    if (spicy.equals("yes")) {
+                        selected.setIsSpicy(true);
+                        break;
+                    } else if (spicy.equals("no")) {
+                        selected.setIsSpicy(false);
+                        break;
+                    } else {
+                        System.out.println(RED + "  ✘ Please enter yes or no." + RESET);
+                    }
+                } catch (Exception e) {
+                    System.out.println(RED + "  ✘ Something went wrong: " + e.getMessage() + RESET);
+                }
+            }
+
+
+
             currentOrder.addItem(selected);
-            System.out.println("\nSignature bowl added!");
-            System.out.println(selected);
-            System.out.printf("Bowl Total: $%.2f%n", selected.getPrice());
+            System.out.println(GREEN + BOLD + "\n  ✔ Signature bowl added!" + RESET);
+            System.out.println(DIM + "  " + selected + RESET);
+            System.out.printf(CYAN + "  Bowl Total: $%.2f%n" + RESET, selected.getPrice());
 
         } catch (NumberFormatException e) {
-            System.out.println("Please enter a valid number.");
+            System.out.println(RED + "  ✘ Please enter a valid number." + RESET);
         } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
+            System.out.println(RED + "  ✘ Error: " + RESET);
         }
     }
 
-    public void addSideScreen() {try {
-        System.out.println("\n--- Add a Pastry Side ($4.99) ---");
-        System.out.println("  1) Puff Puff");
-        System.out.println("  2) Meat Pie");
-        System.out.println("  3) Egg Roll");
-        System.out.print("Choice: ");
-        String choice = scanner.nextLine().trim();
+    public void addSideScreen() {
+        try {
+            System.out.println(GREEN + BOLD + "\n  ─── 🥧 Add a Pastry Side ───" + RESET);
+            System.out.println(DIM + "  All pastries: $4.99" + RESET);
+            System.out.println(WHITE + "    1) Puff Puff");
+            System.out.println("    2) Meat Pie");
+            System.out.println("    3) Egg Roll" + RESET);
+            System.out.print(CYAN + "  ➤ Choice: " + RESET);
+            String choice = scanner.nextLine().trim();
 
-        String type = switch (choice) {
-            case "2" -> "Meat Pie";
-            case "3" -> "Egg Roll";
-            default -> "Puff Puff";
-        };
+            String type = switch (choice) {
+                case "1" -> "Puff Puff";
+                case "2" -> "Meat Pie";
+                case "3" -> "Egg Roll";
+                default -> "Puff Puff";
+            };
 
-        Pastries pastry = new Pastries(type);
-        currentOrder.addItem(pastry);
-        System.out.printf("Added: %s - $%.2f%n", pastry, pastry.getPrice());
+            Pastries pastry = new Pastries(type);
+            currentOrder.addItem(pastry);
+            System.out.printf(GREEN + "  ✔ Added: %s - " + CYAN + "$%.2f%n" + RESET, pastry, pastry.getPrice());
 
-    } catch (Exception e) {
-        System.out.println("Error adding pastry: " );
-    }
+        } catch (Exception e) {
+            System.out.println(RED + "  ✘ Error adding pastry: " + RESET);
+        }
     }
 
     public void addDrinkScreen() {
         try {
-            System.out.println("\n--- Add a Drink ---");
-            System.out.println("Select flavor:");
-            System.out.println("  1) Zobo");
-            System.out.println("  2) Chapman");
-            System.out.print("Choice: ");
+            System.out.println(GREEN + BOLD + "\n  ─── 🥤 Add a Drink ───" + RESET);
+            System.out.println(YELLOW + "  Select flavor:" + RESET);
+            System.out.println(WHITE + "    1) Zobo");
+            System.out.println("    2) Chapman" + RESET);
+            System.out.print(CYAN + "  ➤ Choice: " + RESET);
             String flavorChoice = scanner.nextLine().trim();
 
             String flavor = switch (flavorChoice) {
@@ -233,14 +279,15 @@ public class UserInterface {
                 default -> "Zobo";
             };
 
-            System.out.println("\nSelect size:");
-            System.out.println("  1) Small  - $3.00");
-            System.out.println("  2) Medium - $4.00");
-            System.out.println("  3) Large  - $5.00");
-            System.out.print("Choice: ");
+            System.out.println(YELLOW + "\n  Select size:" + RESET);
+            System.out.printf(WHITE + "    1) Small   " + CYAN + "$3.00%n" + RESET);
+            System.out.printf(WHITE + "    2) Medium  " + CYAN + "$4.00%n" + RESET);
+            System.out.printf(WHITE + "    3) Large   " + CYAN + "$5.00%n" + RESET);
+            System.out.print(CYAN + "  ➤ Choice: " + RESET);
             String sizeChoice = scanner.nextLine().trim();
 
             String size = switch (sizeChoice) {
+                case "1" -> "Small";
                 case "2" -> "Medium";
                 case "3" -> "Large";
                 default -> "Small";
@@ -248,24 +295,23 @@ public class UserInterface {
 
             Drink drink = new Drink(size, flavor);
             currentOrder.addItem(drink);
-            System.out.printf("Added: %s - $%.2f%n", drink, drink.getPrice());
+            System.out.printf(GREEN + "  ✔ Added: %s - " + CYAN + "$%.2f%n" + RESET, drink, drink.getPrice());
 
         } catch (Exception e) {
-            System.out.println("Error adding drink: ");
+            System.out.println(RED + "  ✘ Error adding drink: " + RESET);
         }
-
     }
 
     public void addItemScreen() {
         try {
-            System.out.println("\n--- Build Your Rice Bowl ---");
+            System.out.println(GREEN + BOLD + "\n  ─── 🍚 Build Your Rice Bowl ───" + RESET);
 
-            System.out.println("Select rice type:");
-            System.out.println("  1) Jollof");
-            System.out.println("  2) Fried");
-            System.out.println("  3) Coconut");
-            System.out.println("  4) White");
-            System.out.print("Choice: ");
+            System.out.println(YELLOW + "\n  Select rice type:" + RESET);
+            System.out.println(WHITE + "    1) Jollof");
+            System.out.println("    2) Fried");
+            System.out.println("    3) Coconut");
+            System.out.println("    4) White" + RESET);
+            System.out.print(CYAN + "  ➤ Choice: " + RESET);
             String typeChoice = scanner.nextLine().trim();
 
             String riceType = switch (typeChoice) {
@@ -275,14 +321,15 @@ public class UserInterface {
                 default -> "Jollof";
             };
 
-            System.out.println("\nSelect size:");
-            System.out.println("  1) Small  - $7.99");
-            System.out.println("  2) Medium - $10.99");
-            System.out.println("  3) Large  - $13.99");
-            System.out.print("Choice: ");
+            System.out.println(YELLOW + "\n  Select size:" + RESET);
+            System.out.printf(WHITE + "    1) Small   " + CYAN + "$7.99%n" + RESET);
+            System.out.printf(WHITE + "    2) Medium  " + CYAN + "$10.99%n" + RESET);
+            System.out.printf(WHITE + "    3) Large   " + CYAN + "$13.99%n" + RESET);
+            System.out.print(CYAN + "  ➤ Choice: " + RESET);
             String sizeChoice = scanner.nextLine().trim();
 
             String size = switch (sizeChoice) {
+                case "1" -> "Small";
                 case "2" -> "Medium";
                 case "3" -> "Large";
                 default -> "Small";
@@ -295,146 +342,179 @@ public class UserInterface {
             addRegularToppings(rice);
             addSauceToppings(rice);
 
-            System.out.print("\nMake it spicy? (yes/no): ");
-            String spicy = scanner.nextLine().trim();
-            rice.setIsSpicy(spicy.equalsIgnoreCase("yes"));
+            while (true) {
+                try {
+                    System.out.print(YELLOW + "\n  Make it spicy? 🌶️  (yes/no): " + RESET);
+                    String spicy = scanner.nextLine().trim().toLowerCase();
+                    if (spicy.equals("yes")) {
+                        rice.setIsSpicy(true);
+                        break;
+                    } else if (spicy.equals("no")) {
+                        rice.setIsSpicy(false);
+                        break;
+                    } else {
+                        System.out.println(RED + "  ✘ Please enter yes or no." + RESET);
+                    }
+                } catch (Exception e) {
+                    System.out.println(RED + "  ✘ Something went wrong: " + RESET);
+                }
+            }
 
             currentOrder.addItem(rice);
-            System.out.println("\nRice bowl added to order!");
-            System.out.println(rice);
-            System.out.printf("Bowl Total: $%.2f%n", rice.getPrice());
+            System.out.println(GREEN + BOLD + "\n  ✔ Rice bowl added to order!" + RESET);
+            System.out.println(DIM + "  " + rice + RESET);
+            System.out.printf(CYAN + "  Bowl Total: $%.2f%n" + RESET, rice.getPrice());
 
         } catch (Exception e) {
-            System.out.println("Error building rice bowl: ");
+            System.out.println(RED + "  ✘ Error building rice bowl: " + RESET);
         }
     }
 
     public void addMeatToppings(Rice rice) {
         String[] meats = {"Chicken", "Turkey", "Goat Meat", "Beef", "Lamb"};
-        System.out.println("\n--- Meat Toppings ---");
-        System.out.println("Prices: Small $2.00 | Medium $3.00 | Large $4.00");
-        System.out.println("Extra:  Small +$1.00 | Medium +$1.50 | Large +$2.00");
-        for (int i = 0; i < meats.length; i++) {
-            System.out.printf("  %d) %s%n", i + 1, meats[i]);
-        }
-        System.out.println("  0) Done");
+        System.out.println(YELLOW + BOLD + "\n  ─── 🥩 Meat Toppings ───" + RESET);
+        System.out.printf(DIM + "  Prices: Small $2.00 │ Medium $3.00 │ Large $4.00%n" + RESET);
+        System.out.printf(DIM + "  Extra:  Small +$1.00 │ Medium +$1.50 │ Large +$2.00%n" + RESET);
+
+        // Original loop:
+        // for (int i = 0; i < meats.length; i++) {
+        //     System.out.printf(WHITE + "    %d) %s%n" + RESET, i + 1, meats[i]);
+        // }
+        IntStream.range(0, meats.length)
+                .forEach(i -> System.out.printf(WHITE + "    %d) %s%n" + RESET, i + 1, meats[i]));
+
+        System.out.println(DIM + "    0) Done" + RESET);
 
         while (true) {
             try {
-                System.out.print("Add meat (0 to finish): ");
+                System.out.print(CYAN + "  ➤ Add meat (0 to finish): " + RESET);
                 int pick = Integer.parseInt(scanner.nextLine().trim());
 
                 if (pick == 0) break;
                 if (pick < 1 || pick > meats.length) {
-                    System.out.println("Invalid selection.");
+                    System.out.println(RED + "  ✘ Invalid selection." + RESET);
                     continue;
                 }
 
                 MeatTopping meat = new MeatTopping(meats[pick - 1]);
-                System.out.print("Extra " + meats[pick - 1] + "? (yes/no): ");
+                System.out.print(YELLOW + "  Extra " + meats[pick - 1] + "? (yes/no): " + RESET);
                 meat.setExtra(scanner.nextLine().trim().equalsIgnoreCase("yes"));
 
                 rice.addTopping(meat);
-                System.out.println("Added: " + meat);
+                System.out.println(GREEN + "  ✔ Added: " + meat + " - " + CYAN + String.format("$%.2f", meat.getPrice(rice.getSize())) + RESET);
 
             } catch (NumberFormatException e) {
-                System.out.println("Please enter a valid number.");
+                System.out.println(RED + "  ✘ Please enter a valid number." + RESET);
             }
         }
     }
 
     public void addFishToppings(Rice rice) {
         String[] fish = {"Tilapia", "Catfish", "Croaker", "Red Snapper"};
-        System.out.println("\n--- Premium Fish Toppings ---");
-        System.out.println("Prices: Small $2.50 | Medium $3.50 | Large $4.50");
-        System.out.println("Extra:  Small +$1.25 | Medium +$1.75 | Large +$2.25");
-        for (int i = 0; i < fish.length; i++) {
-            System.out.printf("  %d) %s%n", i + 1, fish[i]);
-        }
-        System.out.println("  0) Done");
+        System.out.println(YELLOW + BOLD + "\n  ─── 🐟 Premium Fish Toppings ───" + RESET);
+        System.out.printf(DIM + "  Prices: Small $2.50 │ Medium $3.50 │ Large $4.50%n" + RESET);
+        System.out.printf(DIM + "  Extra:  Small +$1.25 │ Medium +$1.75 │ Large +$2.25%n" + RESET);
+
+        // Original loop:
+        // for (int i = 0; i < fish.length; i++) {
+        //     System.out.printf(WHITE + "    %d) %s%n" + RESET, i + 1, fish[i]);
+        // }
+        IntStream.range(0, fish.length)
+                .forEach(i -> System.out.printf(WHITE + "    %d) %s%n" + RESET, i + 1, fish[i]));
+
+        System.out.println(DIM + "    0) Done" + RESET);
 
         while (true) {
             try {
-                System.out.print("Add fish (0 to finish): ");
+                System.out.print(CYAN + "  ➤ Add fish (0 to finish): " + RESET);
                 int pick = Integer.parseInt(scanner.nextLine().trim());
 
                 if (pick == 0) break;
                 if (pick < 1 || pick > fish.length) {
-                    System.out.println("Invalid selection.");
+                    System.out.println(RED + "  ✘ Invalid selection." + RESET);
                     continue;
                 }
 
                 FishTopping fishTopping = new FishTopping(fish[pick - 1]);
-                System.out.print("Extra " + fish[pick - 1] + "? (yes/no): ");
+                System.out.print(YELLOW + "  Extra " + fish[pick - 1] + "? (yes/no): " + RESET);
                 fishTopping.setExtra(scanner.nextLine().trim().equalsIgnoreCase("yes"));
 
                 rice.addTopping(fishTopping);
-                System.out.println("Added: " + fishTopping);
+                System.out.println(GREEN + "  ✔ Added: " + fishTopping + " - " + CYAN + String.format("$%.2f", fishTopping.getPrice(rice.getSize())) + RESET);
 
             } catch (NumberFormatException e) {
-                System.out.println("Please enter a valid number.");
+                System.out.println(RED + "  ✘ Please enter a valid number." + RESET);
             }
         }
     }
 
     public void addRegularToppings(Rice rice) {
         String[] regulars = {"Plantain", "Beans", "Eggs", "Coleslaw", "Seaweed"};
-        System.out.println("\n--- Regular Toppings (Free) ---");
-        for (int i = 0; i < regulars.length; i++) {
-            System.out.printf("  %d) %s%n", i + 1, regulars[i]);
-        }
-        System.out.println("  0) Done");
+        System.out.println(YELLOW + BOLD + "\n  ─── 🥗 Regular Toppings (Free) ───" + RESET);
+
+        // Original loop:
+        // for (int i = 0; i < regulars.length; i++) {
+        //     System.out.printf(WHITE + "    %d) %s%n" + RESET, i + 1, regulars[i]);
+        // }
+        IntStream.range(0, regulars.length)
+                .forEach(i -> System.out.printf(WHITE + "    %d) %s%n" + RESET, i + 1, regulars[i]));
+
+        System.out.println(DIM + "    0) Done" + RESET);
 
         while (true) {
             try {
-                System.out.print("Add topping (0 to finish): ");
+                System.out.print(CYAN + "  ➤ Add topping (0 to finish): " + RESET);
                 int pick = Integer.parseInt(scanner.nextLine().trim());
 
                 if (pick == 0) break;
                 if (pick < 1 || pick > regulars.length) {
-                    System.out.println("Invalid selection.");
+                    System.out.println(RED + "  ✘ Invalid selection." + RESET);
                     continue;
                 }
 
                 rice.addTopping(new RegularTopping(regulars[pick - 1]));
-                System.out.println("Added: " + regulars[pick - 1]);
+                System.out.println(GREEN + "  ✔ Added: " + regulars[pick - 1] + RESET);
 
             } catch (NumberFormatException e) {
-                System.out.println("Please enter a valid number.");
+                System.out.println(RED + "  ✘ Please enter a valid number." + RESET);
             }
         }
     }
 
     public void addSauceToppings(Rice rice) {
         String[] sauces = {"Ofada Stew", "Peppered Stew", "Ofe Akwu", "Efe Riro"};
-        System.out.println("\n--- Stew/Condiments (Free) ---");
-        for (int i = 0; i < sauces.length; i++) {
-            System.out.printf("  %d) %s%n", i + 1, sauces[i]);
-        }
-        System.out.println("  0) Done");
+        System.out.println(YELLOW + BOLD + "\n  ─── 🍲 Stew/Condiments (Free) ───" + RESET);
+
+        // Original loop:
+        // for (int i = 0; i < sauces.length; i++) {
+        //     System.out.printf(WHITE + "    %d) %s%n" + RESET, i + 1, sauces[i]);
+        // }
+        IntStream.range(0, sauces.length)
+                .forEach(i -> System.out.printf(WHITE + "    %d) %s%n" + RESET, i + 1, sauces[i]));
+
+        System.out.println(DIM + "    0) Done" + RESET);
 
         while (true) {
             try {
-                System.out.print("Add stew (0 to finish): ");
+                System.out.print(CYAN + "  ➤ Add stew (0 to finish): " + RESET);
                 int pick = Integer.parseInt(scanner.nextLine().trim());
 
                 if (pick == 0) break;
                 if (pick < 1 || pick > sauces.length) {
-                    System.out.println("Invalid selection.");
+                    System.out.println(RED + "  ✘ Invalid selection." + RESET);
                     continue;
                 }
 
                 rice.addTopping(new SauceTopping(sauces[pick - 1]));
-                System.out.println("Added: " + sauces[pick - 1]);
+                System.out.println(GREEN + "  ✔ Added: " + sauces[pick - 1] + RESET);
 
             } catch (NumberFormatException e) {
-                System.out.println("Please enter a valid number.");
+                System.out.println(RED + "  ✘ Please enter a valid number." + RESET);
             }
         }
     }
 
-
-    private void printBanner() {
+    public void printBanner() {
         System.out.println(GREEN + "  ═══════════════════════════════════════════════════════════════" + RESET);
         System.out.println(GREEN + BOLD +
                 "     ____        __                  __    \n" +
@@ -460,10 +540,4 @@ public class UserInterface {
         System.out.println(DIM + "         \"Taste of Home, One Bowl at a Time\"" + RESET);
         System.out.println(GREEN + "  ═══════════════════════════════════════════════════════════════" + RESET);
     }
-
-
-
-
-
-
 }
