@@ -1,14 +1,22 @@
 package com.pluralsight.models;
 
-
-
 import com.pluralsight.models.interfaces.Priceable;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Order {
-    private List<Priceable> items;
+    public List<Priceable> items;
+
+    private static final String RESET = "\033[0m";
+    private static final String BOLD = "\033[1m";
+    private static final String GREEN = "\033[32m";
+    private static final String YELLOW = "\033[33m";
+    private static final String CYAN = "\033[36m";
+    private static final String WHITE = "\033[37m";
+    private static final String DIM = "\033[2m";
+    private static final String BG_GREEN = "\033[42m";
+    private static final String BLACK = "\033[30m";
 
     public Order() {
         this.items = new ArrayList<>();
@@ -29,11 +37,15 @@ public class Order {
     }
 
     public double getTotal() {
-        double total = 0;
-        for (Priceable item : items) {
-            total += item.getPrice();
-        }
-        return total;
+        // Original loop:
+        // double total = 0;
+        // for (Price item : items) {
+        //     total += item.getPrice();
+        // }
+        // return total;
+        return items.stream()
+                .mapToDouble(Priceable::getPrice)
+                .sum();
     }
 
     public boolean isEmpty() {
@@ -41,32 +53,52 @@ public class Order {
     }
 
     public boolean hasNonRiceItem() {
-        for (Priceable item : items) {
-            if (item instanceof Drink || item instanceof Pastries) {
-                return true;
-            }
-        }
-        return false;
+        // Original loop:
+        // for (Price item : items) {
+        //     if (item instanceof Drink || item instanceof Pastries) {
+        //         return true;
+        //     }
+        // }
+        // return false;
+        return items.stream()
+                .anyMatch(item -> item instanceof Drink || item instanceof Pastries);
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("==========================================\n");
-        sb.append("        DUBEM'S NAIJA KITCHEN\n");
-        sb.append("   \"Taste of Home, One Bowl at a Time\"\n");
-        sb.append("==========================================\n\n");
+        sb.append("\n");
+        sb.append(GREEN).append("  ╔══════════════════════════════════════════╗\n").append(RESET);
+        sb.append(GREEN).append("  ║").append(RESET).append(BG_GREEN).append(BLACK).append(BOLD).append("        DUBEM'S NAIJA KITCHEN            ").append(RESET).append(GREEN).append("║\n").append(RESET);
+        sb.append(GREEN).append("  ║").append(RESET).append(WHITE).append("   \"Taste of Home, One Bowl at a Time\"   ").append(GREEN).append("║\n").append(RESET);
+        sb.append(GREEN).append("  ╠══════════════════════════════════════════╣\n").append(RESET);
+        sb.append(GREEN).append("  ║").append(RESET).append(YELLOW).append(BOLD).append("            ORDER RECEIPT                 ").append(RESET).append(GREEN).append("║\n").append(RESET);
+        sb.append(GREEN).append("  ╠══════════════════════════════════════════╣\n").append(RESET);
 
-        int count = 1;
-        for (Priceable item : items) {
-            sb.append(String.format("%d) %s\n", count, item));
-            sb.append(String.format("   Subtotal: $%.2f\n\n", item.getPrice()));
-            count++;
-        }
+        // Original loop:
+        // int count = 1;
+        // for (Price item : items) {
+        //     sb.append("  ║ ").append(count).append(") ").append(item).append("\n");
+        //     sb.append("  ║ ").append(String.format("   Subtotal: $%.2f", item.getPrice())).append("\n");
+        //     sb.append("  ║──────────────────────────────────────────\n");
+        //     count++;
+        // }
+        int[] count = {1};
+        items.forEach(item -> {
+            sb.append(GREEN).append("  ║ ").append(RESET);
+            sb.append(WHITE).append(BOLD).append(count[0]).append(") ").append(RESET);
+            sb.append(WHITE).append(item).append("\n");
+            sb.append(GREEN).append("  ║ ").append(RESET);
+            sb.append(CYAN).append(String.format("   Subtotal: $%.2f", item.getPrice())).append("\n").append(RESET);
+            sb.append(GREEN).append("  ║").append(RESET).append(DIM).append("──────────────────────────────────────────").append(RESET).append("\n");
+            count[0]++;
+        });
 
-        sb.append("------------------------------------------\n");
-        sb.append(String.format("ORDER TOTAL: $%.2f\n", getTotal()));
-        sb.append("==========================================");
+        sb.append(GREEN).append("  ╠══════════════════════════════════════════╣\n").append(RESET);
+        sb.append(GREEN).append("  ║ ").append(RESET);
+        sb.append(GREEN).append(BOLD).append(String.format("   ORDER TOTAL:  $%.2f", getTotal()));
+        sb.append("                ").append(RESET).append("\n");
+        sb.append(GREEN).append("  ╚══════════════════════════════════════════╝\n").append(RESET);
 
         return sb.toString();
     }
